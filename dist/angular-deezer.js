@@ -26,10 +26,9 @@
     angular
         .module('angularDeezer.services')
         .provider('Deezer', DeezerProvider)
-        .run(['$timeout', '$q', '$window', initDeezerSdk])
+        .run(['$timeout', '$window', initDeezerSdk])
     ;
 
-    var loadDeferred;
     var options = {
         appId: null,
         channelUrl: null
@@ -50,7 +49,6 @@
 
         this.$get = ['$q', '$window', function($q, $window) {
             var ngDeezer = function() {
-                console.log(options);
                 this.appId = options.appId;
                 this.channelUrl = options.channelUrl;
             }
@@ -69,33 +67,49 @@
                 return deferred.promise;
             }
 
+            angular.forEach([
+                'ready',
+                'logout',
+                'api',
+                'getLoginStatus'
+            ], function(name) {
+                ngDeezer.prototype[name] = function() {
+                    var deferred = $q.defer();
+                    var args = Array.prototype.slice.call(arguments);
+
+                    //Add a function to be resolved to a promise
+                    args.push(function(response) {
+                        if (response && typeof response.error == 'undefined') {
+                            deferred.resolve(response);
+                        } else {
+                            deferred.reject(response);
+                        }
+                    });
+                    $window.DZ[name].apply(DZ, args);
+
+                    return deferred.promise;
+                }
+            });
             return new ngDeezer();
         }]
     }
 
-    function initDeezerSdk($timeout, $q, $window) {
-        loadDeferred = $q.defer();
-
-        /**
-         * Define fbAsyncInit required by Facebook API
-         */
+    function initDeezerSdk($timeout, $window) {
         $window.dzAsyncInit = function() {
             // Initialize our Facebook app
             $timeout(function() {
                 if (!options.appId) {
                     throw 'Missing appId setting.';
                 }
+                if (!options.channelUrl) {
+                    throw 'Missing channelUrl setting.';
+                }
 
                 $window.DZ.init(options);
-
-                loadDeferred.resolve(DZ);
             });
         };
 
 
-        /**
-         * Inject Facebook root element in DOM
-         */
         (function addDZRoot() {
             var dzRoot = document.getElementById('dz-root');
 
