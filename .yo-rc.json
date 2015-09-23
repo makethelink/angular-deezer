@@ -1,0 +1,29 @@
+{
+  "generator-angularjs-library": {
+    "props": {
+      "author": {
+        "name": "Kieu Anh Tuan",
+        "email": "passkey1510@gmail.com"
+      },
+      "libraryName": {
+        "original": "angular-deezer",
+        "camelized": "angularDeezer",
+        "dasherized": "angular-deezer",
+        "slugified": "angular-deezer",
+        "parts": [
+          "angular",
+          "deezer"
+        ]
+      },
+      "includeModuleDirectives": false,
+      "includeModuleFilters": false,
+      "includeModuleServices": true,
+      "includeAngularModuleResource": false,
+      "includeAngularModuleCookies": false,
+      "includeAngularModuleSanitize": false,
+      "librarySrcDirectory": "src/angular-deezer",
+      "libraryUnitTestDirectory": "test/unit/angular-deezer",
+      "libraryUnitE2eDirectory": "test/e2e/angular-deezer"
+    }
+  }
+}
